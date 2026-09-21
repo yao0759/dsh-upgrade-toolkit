@@ -12,6 +12,7 @@ If you upgraded DSH and now see any of these, this repo is for you:
 - `corrupt Zstandard session log: first frame is not exactly one header`
 - `failed to create session: TypeError: session.events is not iterable`
 - Old conversations fail to load / the model tab is stuck on "loading"
+- Normal chat works but **any tool call** fails: `... reading 'prepare'`
 - A plugin "did not activate" after the upgrade
 
 ## Why these happen
@@ -29,6 +30,13 @@ There are two independent failure surfaces:
 2. **Plugin/Host API drift.** Plugins call Host interfaces that changed
    (`session.events` → `session.snapshotEvents()`, Connection RPC grants, the
    Mnemon settings RPC). Older plugin releases stop activating until upgraded.
+
+   A subtle variant on `0.1.6-alpha.2`: because the process mixes tsx-loaded
+   **src** and prebuilt **lib**, a plain `Symbol()` scheduler key differs
+   between the two planes, so `ctx.tools[scheduler]` is undefined and every
+   tool call fails with `reading 'prepare'`. Use `Symbol.for(...)` — see
+   [docs/issues/06](docs/issues/06-scheduler-symbol.md) and
+   `scripts/patch-scheduler-symbol.mjs`.
 
 A single bad session can make the whole workspace registry fail, which is why
 "just one conversation" errors often coincide with the model never loading.

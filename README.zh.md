@@ -10,6 +10,7 @@
 - `corrupt Zstandard session log: first frame is not exactly one header`
 - `failed to create session: TypeError: session.events is not iterable`
 - 历史对话打不开 / 模型一直卡在"加载中"
+- 普通对话正常，但**任意工具调用**失败：`... reading 'prepare'`
 - 升级后有插件"did not activate（未激活）"
 
 ## 为什么会出现这些问题
@@ -19,6 +20,8 @@ DSH 在版本跳变时可能同时改变**会话文件格式**和**宿主插件 
 1. **会话负载与分帧。** 格式校验变严格（带 `summary` 的插件源必须使用 `form: "notice"`）；而 `session.jsonl.zstd` 是一个**多帧（multi-frame）**文件，第一帧必须能独立解码且只包含头部行。若用普通 `zstd` 重压缩来修复负载，会破坏该分帧，并连锁导致工作区注册表失败。
 
 2. **插件/宿主 API 漂移。** 插件调用的宿主接口发生变化（`session.events` → `session.snapshotEvents()`、Connection RPC 授权、Mnemon 设置 RPC）。旧版插件在升级前会停止激活。
+
+   `0.1.6-alpha.2` 上一个隐蔽变体：进程混用了 tsx 加载的 **src** 和预构建 **lib**，普通 `Symbol()` 调度键在两个平面不相同，导致 `ctx.tools[scheduler]` 为 undefined，所有工具调用报 `reading 'prepare'`。改用 `Symbol.for(...)`——见 [docs/issues/06](docs/issues/06-scheduler-symbol.md) 和 `scripts/patch-scheduler-symbol.mjs`。
 
 单个损坏会话就可能让整个工作区注册表失败——这正是"只有一个对话报错"却常常伴随"模型永远加载中"的原因。
 

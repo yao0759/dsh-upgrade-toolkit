@@ -10,8 +10,9 @@ upgrade. Issues are ordered roughly as they surfaced.
 3. [`session.events is not iterable`](#3)
 4. [dsh-pocket: did not activate](#4)
 5. [dsh-mnemon: settings RPC / memory panel](#5)
-6. [Workspace/mount prerequisites](#6)
-7. [A debugging workflow that works](#7)
+6. [Tool calls fail: `reading 'prepare'` (scheduler Symbol)](#6b)
+7. [Workspace/mount prerequisites](#6)
+8. [A debugging workflow that works](#7)
 
 ---
 
@@ -153,7 +154,22 @@ token is invalidated).
 
 ---
 
-## 6. Workspace / mount prerequisites <a id="6"></a>
+## 6b. Tool calls fail: `reading 'prepare'` <a id="6b"></a>
+
+**Symptom.** Normal chat replies; any tool (Grep, Bash `ls`, reading a file)
+fails with `Cannot read properties of undefined (reading 'prepare')` at agent-loop
+`startCall`. Full analysis and the runnable patch are in
+[issues/06](issues/06-scheduler-symbol-for.md).
+
+**Root cause.** The process mixes tsx **src** and prebuilt **lib**. The
+scheduler key was a plain `Symbol()`, unique per plane, so the symbol used to
+register differs from the one used to look up → `ctx.tools[scheduler]` is
+undefined. Fix = `Symbol.for('@deepseek-ai/dsh-tools.scheduler')`, rebuild
+`build:lib:host`, verify src/lib symbols are equal, restart with the new token.
+
+---
+
+## Workspace / mount prerequisites <a id="6"></a>
 
 Before blaming DSH, confirm the workspaces are reachable:
 
