@@ -1,5 +1,7 @@
 # DSH Upgrade Toolkit
 
+**English** | [中文](README.zh.md)
+
 A practical, runnable toolkit for recovering a **DeepSeek Harness (DSH)**
 installation after a version upgrade — documented from a real 0.1.5 →
 0.1.6-alpha migration where 220 of 261 stored sessions and three plugins broke.
