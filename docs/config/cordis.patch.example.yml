@@ -1,0 +1,10 @@
+# Example user-profile patch for DSH after the 0.1.6-alpha upgrade.
+# Place these rows in your profile's cordis.patch.yml
+# (e.g. ~/.dsh/profiles/web/cordis.patch.yml). Rows deep-merge by id, so you do
+# not need to repeat the whole default configuration.
+
+# Authorize the Web deployment to call the Mnemon settings/management RPC.
+# Default remoteAccess is "read-only", which blocks the in-browser settings tab.
+- id: mnemon
+  config:
+    remoteAccess: trusted-host

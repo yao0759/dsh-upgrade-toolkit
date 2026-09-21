@@ -1,0 +1,28 @@
+{
+  "name": "dsh-upgrade-toolkit",
+  "version": "1.0.0",
+  "description": "Recover a DeepSeek Harness (DSH) installation after a version upgrade: migrate v0 sessions and resolve plugin/Host API mismatches.",
+  "type": "module",
+  "main": "scripts/migrate-sessions.mjs",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "scan": "node scripts/migrate-sessions.mjs",
+    "fix": "node scripts/migrate-sessions.mjs --apply"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "migration",
+    "zstd",
+    "zstandard",
+    "recovery",
+    "upgrade"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yao0759/dsh-upgrade-toolkit.git"
+  }
+}

@@ -1,0 +1,8 @@
+# Node / OS
+node_modules/
+*.log
+.DS_Store
+
+# Local session trees (only ever used for isolated testing)
+probe_sessions/
+*.zstd.new
